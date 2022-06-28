@@ -33,6 +33,21 @@ container.addEventListener('mouseleave', () => {holdingDownMouse = false});
 enterDrawMode(colorMode);
 drawEmptyCanvas();
 
+slider.onchange = function () {
+    boxAmount = this.value * this.value;
+    resetCanvas();
+
+}
+
+slider.oninput = function () {
+    gridSizeText.innerText = `${this.value} x ${this.value}`;
+}
+
+colorPicker.oninput = function () {
+    drawColor = this.value;
+}
+
+
 function toggleGridLines() {
     const boxes = document.querySelectorAll('.emptybox');
     if(!isGridOn) {
@@ -51,19 +66,6 @@ function toggleGridLines() {
     }
 }
 
-slider.onchange = function () {
-    boxAmount = this.value * this.value;
-    resetCanvas();
-
-}
-
-slider.oninput = function () {
-    gridSizeText.innerText = `${this.value} x ${this.value}`;
-}
-
-colorPicker.oninput = function () {
-    drawColor = this.value;
-}
 
 function enterDrawMode(button) {
     if (currentDrawMode === button) return;
