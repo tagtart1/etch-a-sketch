@@ -5,40 +5,89 @@ const container = document.querySelector('.container');
 const slider = document.querySelector('.slider');
 const gridSizeText = document.querySelector('.grid-value-text');
 const colorPicker = document.querySelector('.color-picker');
+const clearBtn = document.querySelector('#clear');
+const rainbowMode = document.querySelector('#rainbow');
+const shadeMode = document.querySelector('#shade');
+const colorMode = document.querySelector('#color-btn');
+const eraserMode = document.querySelector('#eraser');
+const gridBtn = document.querySelector('#grid');
 
 let boxAmount = 256; //init value
 let holdingDownMouse = false;
 let drawColor = colorPicker.value;
+let currentDrawMode;
+let isGridOn = false;
 
 
-
-drawEmptyBoard();
-
-
+gridBtn.addEventListener('click', () => toggleGridLines())
+colorMode.addEventListener('click', () => enterDrawMode(colorMode));
+rainbowMode.addEventListener('click', () => enterDrawMode(rainbowMode));
+clearBtn.addEventListener('click', resetCanvas);
+shadeMode.addEventListener('click',() => enterDrawMode(shadeMode));
+eraserMode.addEventListener('click', () => enterDrawMode(eraserMode));
 
 container.addEventListener('mousedown', () => {holdingDownMouse = true});
 container.addEventListener('mouseup', () => {holdingDownMouse = false} );
 container.addEventListener('mouseleave', () => {holdingDownMouse = false});
 
-slider.oninput = function () {
+enterDrawMode(colorMode);
+drawEmptyCanvas();
+
+function toggleGridLines() {
+    const boxes = document.querySelectorAll('.emptybox');
+    if(!isGridOn) {
+    isGridOn = true;
+    gridBtn.style.background = `rgb(37,37,37)`;
+    gridBtn.style.color = `white`;
+    boxes.forEach(box => box.classList.add('grid-lines'));
+    
+    }
+    else {
+        isGridOn = false;
+        gridBtn.style.background = `rgb(230, 230, 230)`;
+        gridBtn.style.color = `rgb(37,37,37)`;
+        boxes.forEach(box => box.classList.remove('grid-lines'));
+        
+    }
+}
+
+slider.onchange = function () {
     boxAmount = this.value * this.value;
+    resetCanvas();
+
+}
+
+slider.oninput = function () {
     gridSizeText.innerText = `${this.value} x ${this.value}`;
-
-    const oldBoxes = document.querySelectorAll('.emptybox');
-    oldBoxes.forEach(oldBox => oldBox.remove() );
-    drawEmptyBoard();
-
 }
 
 colorPicker.oninput = function () {
     drawColor = this.value;
 }
 
-function drawEmptyBoard() {
+function enterDrawMode(button) {
+    if (currentDrawMode === button) return;
+    if (currentDrawMode != null) {
+    currentDrawMode.style.background = `rgb(230, 230, 230)`;
+    currentDrawMode.style.color = `rgb(37,37,37)`;
+    }
+    currentDrawMode = button;
+    button.style.background = `rgb(37,37,37)`;
+    button.style.color = `white`;
+}
+
+function resetCanvas() {
+    const oldBoxes = document.querySelectorAll('.emptybox');
+    oldBoxes.forEach(oldBox => oldBox.remove() );
+    drawEmptyCanvas();
+}
+
+function drawEmptyCanvas() {
     for (let i = 1; i <= boxAmount ; i++) {
         const boxDimension = drawSpaceWidth / Math.sqrt(boxAmount)
         const newBox = document.createElement('div');
         newBox.classList.add('emptybox');
+        if (isGridOn) newBox.classList.add('grid-lines');
         newBox.style.width = `${boxDimension}px`;
         newBox.style.height = `${boxDimension}px`;
         newBox.addEventListener('mouseenter', colorBoxHeld);
@@ -47,14 +96,42 @@ function drawEmptyBoard() {
        
     }
 }
+
+function getRandomColor() {
+    const r = Math.floor(Math.random() * 256);
+    const g = Math.floor(Math.random() * 256);
+    const b = Math.floor(Math.random() * 256);
+    const rgb = `rgb(${r},${g},${b})`;
+    return rgb;
+}
+
+
+
 function colorBoxClick(e) {  
     this.classList.add('colored');
-    this.style.background = drawColor;
+    if (currentDrawMode == rainbowMode) {
+        this.style.background = getRandomColor();
+     }
+     else if (currentDrawMode == eraserMode) {
+        this.style.background = `white`;
+     }
+     else if (currentDrawMode == shadeMode) {
+           rgbvalue = this.style.background;
+     }
+     else
+     this.style.background = drawColor;
 }
 
 function colorBoxHeld(e) { 
    if (holdingDownMouse) {
      this.classList.add('colored');
+     if (currentDrawMode == rainbowMode) {
+        this.style.background = getRandomColor();
+     }
+     else if (currentDrawMode == eraserMode) {
+        this.style.background = `white`;
+     }
+     else
      this.style.background = drawColor;
    }
 }
