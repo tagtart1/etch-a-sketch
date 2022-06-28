@@ -88,6 +88,7 @@ function drawEmptyCanvas() {
         const newBox = document.createElement('div');
         newBox.classList.add('emptybox');
         if (isGridOn) newBox.classList.add('grid-lines');
+        newBox.style.background = 'rgb(255,255,255)';
         newBox.style.width = `${boxDimension}px`;
         newBox.style.height = `${boxDimension}px`;
         newBox.addEventListener('mouseenter', colorBoxHeld);
@@ -105,6 +106,14 @@ function getRandomColor() {
     return rgb;
 }
 
+function shadeColor(rgbvalues) {
+    let newValues = rgbvalues.match(/\d+/g); //extracts the RGB values from the string
+    newValues[0] *= .85;
+    newValues[1] *= .85;
+    newValues[2] *= .85;
+    return `rgb(${newValues[0]}, ${newValues[1]}, ${newValues[2]})`
+}
+
 
 
 function colorBoxClick(e) {  
@@ -116,7 +125,7 @@ function colorBoxClick(e) {
         this.style.background = `white`;
      }
      else if (currentDrawMode == shadeMode) {
-           rgbvalue = this.style.background;
+        this.style.background = shadeColor(this.style.background)
      }
      else
      this.style.background = drawColor;
@@ -128,6 +137,10 @@ function colorBoxHeld(e) {
      if (currentDrawMode == rainbowMode) {
         this.style.background = getRandomColor();
      }
+     else if (currentDrawMode == shadeMode) {
+       
+        this.style.background = shadeColor(this.style.background)
+  }
      else if (currentDrawMode == eraserMode) {
         this.style.background = `white`;
      }
