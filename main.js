@@ -110,7 +110,7 @@ function getRandomColor() {
 
 function shadeColor(rgbvalues) {
     let newValues = rgbvalues.match(/\d+/g); //extracts the RGB values from the string
-    newValues[0] *= .85;
+    newValues[0] *= .85; //for each loop would not work for some reason
     newValues[1] *= .85;
     newValues[2] *= .85;
     return `rgb(${newValues[0]}, ${newValues[1]}, ${newValues[2]})`
@@ -124,7 +124,7 @@ function colorBoxClick(e) {
         this.style.background = getRandomColor();
      }
      else if (currentDrawMode == eraserMode) {
-        this.style.background = `white`;
+        this.style.background = `rgb(255, 255, 255)`;
      }
      else if (currentDrawMode == shadeMode) {
         this.style.background = shadeColor(this.style.background)
@@ -144,7 +144,7 @@ function colorBoxHeld(e) {
         this.style.background = shadeColor(this.style.background)
   }
      else if (currentDrawMode == eraserMode) {
-        this.style.background = `white`;
+        this.style.background = `rgb(255, 255, 255)`;
      }
      else
      this.style.background = drawColor;
